@@ -1,0 +1,80 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.backButton {
+  align-self: flex-start;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.backButton:hover {
+  background-color: #005bb5;
+}
+
+.userDetail {
+  text-align: center;
+  max-width: 100%;
+}
+
+.userImage {
+  border-radius: 50%;
+  max-width: 150px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.userName {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.userInfo {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+@media (min-width: 768px) {
+  .userImage {
+    max-width: 200px;
+  }
+
+  .userName {
+    font-size: 32px;
+  }
+
+  .userInfo {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    padding: 24px;
+  }
+
+  .userImage {
+    max-width: 250px;
+  }
+
+  .userName {
+    font-size: 36px;
+  }
+
+  .userInfo {
+    font-size: 20px;
+  }
+}

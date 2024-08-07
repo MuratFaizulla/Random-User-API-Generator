@@ -1,0 +1,60 @@
+.userCard {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  /* margin: 80px; */
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.userCard:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.userImage {
+  width: 100%;
+  height: auto;
+  /* border-radius: 50%; */
+  margin-bottom: 10px;
+}
+
+.userName {
+  margin: 10px 0;
+  font-size: 1.25rem;
+}
+
+.userInfo {
+  margin: 5px 0;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .userCard {
+    padding: 12px;
+  }
+
+  .userName {
+    font-size: 1.125rem;
+  }
+
+  .userInfo {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .userCard {
+    padding: 8px;
+  }
+
+  .userName {
+    font-size: 1rem;
+  }
+
+  .userInfo {
+    font-size: 0.6875rem;
+  }
+}
