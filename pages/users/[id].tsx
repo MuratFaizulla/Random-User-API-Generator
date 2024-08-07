@@ -43,9 +43,10 @@ const UserDetail: React.FC<UserDetailProps> = ({ user }) => {
 
   return (
     <div className={styles.container}>
-      <button onClick={() => router.push('/')} className={styles.backButton}>
+      <button onClick={() => router.back()} className={styles.backButton}>
         Назад
       </button>
+
       <div className={styles.userDetail}>
         <img src={user.picture.large} alt={`${first} ${last}`} className={styles.userImage} />
         <h1 className={styles.userName}>{`${title} ${first} ${last}`}</h1>

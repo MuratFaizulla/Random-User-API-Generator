@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 import UserList from '../components/UserList';
+import Pagination from '../components/Pagination'; // Подключите ваш компонент Pagination
 import styles from '../styles/Home.module.css';
 import { fetchUsers } from '../utils/fetchUsers';
 
@@ -44,24 +46,35 @@ interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ initialUsers, totalPages }) => {
+  const router = useRouter();
+  const queryPage = parseInt(router.query.page as string, 10) || 1;
+
   const [users, setUsers] = useState<User[]>(initialUsers);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(queryPage);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handlePageChange = async (page: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { users } = await fetchUsers(page);
-      setUsers(users);
-      setCurrentPage(page);
-    } catch (err) {
-      setError('Failed to fetch users.');
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    const fetchUsersData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { users } = await fetchUsers(currentPage);
+        setUsers(users);
+      } catch (err) {
+        setError('Failed to fetch users.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsersData();
+  }, [currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    router.push({ pathname: router.pathname, query: { ...router.query, page } });
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,13 +103,15 @@ const Home: React.FC<HomeProps> = ({ initialUsers, totalPages }) => {
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
+   
     </div>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const page = parseInt(context.query.page as string, 10) || 1;
   try {
-    const { users, totalPages } = await fetchUsers(1);
+    const { users, totalPages } = await fetchUsers(page);
     return {
       props: {
         initialUsers: users,
