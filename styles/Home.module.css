@@ -10,7 +10,17 @@
   margin-right: 50px;
 
 }
+.loading {
+  font-size: 18px;
+  color: #0070f3; 
+  font-weight: bold;
+}
 
+.error {
+  font-size: 18px;
+  color: #e00; 
+  font-weight: bold;
+}
 .searchInput {
   width: 100%;
   max-width: 400px;
@@ -33,6 +43,8 @@
 
   .searchInput {
     max-width: 100%;
+    padding: 10px;
+
   }
 
   .title {

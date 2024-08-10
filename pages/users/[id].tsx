@@ -34,11 +34,16 @@ interface User {
 }
 
 interface UserDetailProps {
-  user: User;
+  user: User | null;
 }
 
 const UserDetail: React.FC<UserDetailProps> = ({ user }) => {
   const router = useRouter();
+  
+  if (!user) {
+    return <p>Failed to load user details.</p>;
+  }
+
   const { title, first, last } = user.name;
 
   return (
@@ -48,7 +53,13 @@ const UserDetail: React.FC<UserDetailProps> = ({ user }) => {
       </button>
 
       <div className={styles.userDetail}>
-        <img src={user.picture.large} alt={`${first} ${last}`} className={styles.userImage} />
+        <img
+          src={user.picture.large}
+          alt={`${first} ${last}`}
+          className={styles.userImage}
+          width={200}
+          height={200}
+        />
         <h1 className={styles.userName}>{`${title} ${first} ${last}`}</h1>
         <p className={styles.userInfo}>Email: {user.email}</p>
         <p className={styles.userInfo}>Phone: {user.phone}</p>
@@ -65,13 +76,20 @@ const UserDetail: React.FC<UserDetailProps> = ({ user }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.params as { id: string };
-  const user = await fetchUser(id);
-
-  return {
-    props: {
-      user,
-    },
-  };
+  try {
+    const user = await fetchUser(id);
+    return {
+      props: {
+        user,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        user: null,
+      },
+    };
+  }
 };
 
 export default UserDetail;

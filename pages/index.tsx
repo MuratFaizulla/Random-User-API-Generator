@@ -1,42 +1,25 @@
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import UserList from '../components/UserList';
-import Pagination from '../components/Pagination'; // Подключите ваш компонент Pagination
 import styles from '../styles/Home.module.css';
 import { fetchUsers } from '../utils/fetchUsers';
 
 interface User {
-  login: {
-    uuid: string;
-  };
-  name: {
-    title: string;
-    first: string;
-    last: string;
-  };
+  login: { uuid: string };
+  name: { title: string; first: string; last: string };
   email: string;
   phone: string;
   cell: string;
-  dob: {
-    date: string;
-    age: number;
-  };
+  dob: { date: string; age: number };
   location: {
-    street: {
-      number: number;
-      name: string;
-    };
+    street: { number: number; name: string };
     city: string;
     state: string;
     country: string;
     postcode: string;
   };
-  picture: {
-    large: string;
-    medium: string;
-    thumbnail: string;
-  };
+  picture: { large: string; medium: string; thumbnail: string };
   nat: string;
 }
 
@@ -55,26 +38,30 @@ const Home: React.FC<HomeProps> = ({ initialUsers, totalPages }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUsersData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { users } = await fetchUsers(currentPage);
-        setUsers(users);
-      } catch (err) {
-        setError('Failed to fetch users.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = useCallback(async (page: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { users } = await fetchUsers(page);
+      setUsers(users);
+    } catch (err) {
+      setError('Failed to fetch users.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    fetchUsersData();
-  }, [currentPage]);
+  useEffect(() => {
+    if (currentPage !== queryPage) {
+      fetchData(currentPage);
+    }
+  }, [currentPage, queryPage, fetchData]);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    router.push({ pathname: router.pathname, query: { ...router.query, page } });
+    if (page !== currentPage) {
+      setCurrentPage(page);
+      router.push({ pathname: router.pathname, query: { ...router.query, page } });
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,15 +82,18 @@ const Home: React.FC<HomeProps> = ({ initialUsers, totalPages }) => {
         onChange={handleSearchChange}
         className={styles.searchInput}
       />
-      {loading && <p>Loading...</p>}
+      {loading && <p className={styles.loading}>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
-      <UserList
-        users={filteredUsers}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-   
+      {users.length > 0 ? (
+        <UserList
+          users={filteredUsers}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      ) : (
+        !loading && <p>No users found.</p>
+      )}
     </div>
   );
 };
